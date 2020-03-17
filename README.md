@@ -1,4 +1,4 @@
-# LuceneIndexAndSearch
+# Indexing And Searching
 
 Group Project
 
