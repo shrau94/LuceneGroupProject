@@ -1,6 +1,6 @@
 # Indexing And Searching
 
-Group Project
+CS7IS3 Group Project
 
 ### Creating the jar file
 
