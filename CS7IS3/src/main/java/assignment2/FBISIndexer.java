@@ -91,7 +91,7 @@ public class FBISIndexer {
 		Elements tmpElement = element.clone(); 
 		String data = tmpElement.toString(); 
 		if(data.contains("\n"))
-			data = data.replaceAll("\n", "").trim();
+			data = data.replaceAll("\n", " ").trim();
 		if(data.contains(("<" + tag + ">").toLowerCase()))
 			data = data.replaceAll("<" + tag.toLowerCase() + ">", "").trim();
 		if(data.contains(("</" + tag + ">").toLowerCase()))

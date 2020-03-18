@@ -49,7 +49,7 @@ public class MyQueryParser {
 	public static void search() throws IOException, ParseException {
 
 		Analyzer analyzer = new StandardAnalyzer();
-		OutputStream os = null;
+		//OutputStream os = null;
 		
 		// Emptying the file contents if it is already filled with values
 
@@ -78,7 +78,7 @@ public class MyQueryParser {
 		
 		
 		// Closing everything
-		os.close();
+		//os.close();
 		ireader.close();
 		directory.close();
 	}
