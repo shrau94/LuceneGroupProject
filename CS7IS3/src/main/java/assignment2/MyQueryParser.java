@@ -61,6 +61,7 @@ public class MyQueryParser {
 		br = new BufferedReader(new FileReader(QUERIES_PATH + "/" + "topics.txt"));
 		parseQuery();
 				
+
 		// Emptying the file contents if it is already filled with values
 
 		// Open the folder that contains our search index
@@ -100,6 +101,7 @@ public class MyQueryParser {
 		
 		
 		// Closing everything
+
 		ireader.close();
 		directory.close();
 	}
