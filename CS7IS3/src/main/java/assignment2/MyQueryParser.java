@@ -76,7 +76,7 @@ public class MyQueryParser {
 
 		// Creating the  parser and adding "title", "description"
 		
-		parser = new MultiFieldQueryParser(new String[] { "text", "ti" }, analyzer);
+		parser = new MultiFieldQueryParser(new String[] { "text", "headline" }, analyzer);
 		
 		for(int i=0;i<title.size();i++) {
 			String result = title.get(i)+description.get(i);
