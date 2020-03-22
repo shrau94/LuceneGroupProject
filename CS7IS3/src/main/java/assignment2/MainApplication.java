@@ -9,6 +9,7 @@ public class MainApplication {
 //		MyQueryParser.search();
 //		FR94Indexer.indexFR94();
 //		FR94QueryParser.search();
-		FTIndexer.indexFT();
+//		FTIndexer.indexFT();
+		LATimesIndexer.indexLATimes();
 	}
 }
