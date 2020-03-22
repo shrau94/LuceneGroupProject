@@ -93,18 +93,18 @@ public class MyQueryParser {
 			queries.add(query);
 			}		
 
-//		// Parsing all the queries in the given file		
+		// Parsing all the queries in the given file		
 		
-//		for(Query queryTemp : queries) {
-//			
-//			ScoreDoc[] hits = isearcher.search(queryTemp, MAX_RESULTS).scoreDocs;  
-//			for (int i = 0; i < hits.length; i++) {
-//	            int docno = hits[i].doc;
-//	            Document d = isearcher.doc(docno);
-//	            System.out.println(d.get("docno"));
-//			}
-//			
-//		}
+		for(Query queryTemp : queries) {
+			
+			ScoreDoc[] hits = isearcher.search(queryTemp, MAX_RESULTS).scoreDocs;  
+			for (int i = 0; i < hits.length; i++) {
+	            int docno = hits[i].doc;
+	            Document d = isearcher.doc(docno);
+	            System.out.println(d.get("docno"));
+			}
+			
+		}
 		
 		
 		
