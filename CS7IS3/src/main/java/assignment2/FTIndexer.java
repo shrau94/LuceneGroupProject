@@ -35,7 +35,7 @@ public class FTIndexer {
 
         Directory ftDir = FSDirectory.open(Paths.get(FT_DIRECTORY));
         Directory indexDirectory = FSDirectory.open(Paths.get(FT_INDEX_DIRECTORY));
-        Analyzer analyzer = new StandardAnalyzer();
+        Analyzer analyzer = new MyAnalyzer();
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
         config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
         IndexWriter iwriter = new IndexWriter(indexDirectory, config);

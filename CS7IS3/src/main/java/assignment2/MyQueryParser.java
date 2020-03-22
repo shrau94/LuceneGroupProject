@@ -25,8 +25,10 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
+
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.tartarus.snowball.ext.PorterStemmer;
 import org.jsoup.parser.Parser;
 
 public class MyQueryParser {
@@ -45,12 +47,11 @@ public class MyQueryParser {
 	private static BufferedReader br;
 	private static ArrayList<Query> queries = new ArrayList<Query>();
 	private static MultiFieldQueryParser parser;
-	
-	private static ArrayList<String> query = new ArrayList<String>();
 	private static ArrayList<String> number = new ArrayList<String>();
 	private static ArrayList<String> title = new ArrayList<String>();
 	private static ArrayList<String> description = new ArrayList<String>();
-	Analyzer analyzer = new StandardAnalyzer();
+	private static ArrayList<String> narrative = new ArrayList<String>();
+	Analyzer analyzer = new MyAnalyzer();
 	
 	
 	
@@ -60,7 +61,7 @@ public class MyQueryParser {
 		Analyzer analyzer = new StandardAnalyzer();
 		br = new BufferedReader(new FileReader(QUERIES_PATH + "/" + "topics.txt"));
 		parseQuery();
-				
+		
 
 		// Emptying the file contents if it is already filled with values
 
@@ -77,26 +78,33 @@ public class MyQueryParser {
 		// Creating the  parser and adding "title", "description"
 		
 		parser = new MultiFieldQueryParser(new String[] { "text", "headline" }, analyzer);
+		PorterStemmer stemmer = new PorterStemmer();
 		
 		for(int i=0;i<title.size();i++) {
-			String result = title.get(i)+description.get(i);
+			
+			String result = title.get(i)+ " "+ description.get(i)+ " "+ parseNarr(narrative.get(i));
+			
+			stemmer.setCurrent(result);
+			stemmer.stem();
+			result = stemmer.getCurrent();
+			System.out.println(result);
 			Query query = null;
 			query=parser.parse(result);
 			queries.add(query);
 			}		
 
-		// Parsing all the queries in the given file		
+//		// Parsing all the queries in the given file		
 		
-		for(Query queryTemp : queries) {
-			
-			ScoreDoc[] hits = isearcher.search(queryTemp, MAX_RESULTS).scoreDocs;  
-			for (int i = 0; i < hits.length; i++) {
-	            int docno = hits[i].doc;
-	            Document d = isearcher.doc(docno);
-	            System.out.println(d.get("docno"));
-			}
-			
-		}
+//		for(Query queryTemp : queries) {
+//			
+//			ScoreDoc[] hits = isearcher.search(queryTemp, MAX_RESULTS).scoreDocs;  
+//			for (int i = 0; i < hits.length; i++) {
+//	            int docno = hits[i].doc;
+//	            Document d = isearcher.doc(docno);
+//	            System.out.println(d.get("docno"));
+//			}
+//			
+//		}
 		
 		
 		
@@ -116,14 +124,15 @@ public class MyQueryParser {
 			docNum.select("desc").remove();
 			List<Element> num = docNum.getElementsByTag("num");
 			for(Element numData : num) {
-				number.add((numData.text()).trim());
+				number.add(clean(numData.text()).trim().toLowerCase());
 			}
 			
 			//filtering title
 			org.jsoup.nodes.Document docQueryTitle = Jsoup.parse(fileContents);
 			List<Element> titles = docQueryTitle.getElementsByTag("title");	
 			for(Element titleData : titles) {
-				title.add((titleData.text()).trim());
+				title.add(clean(titleData.text()).trim().toLowerCase());
+				
 			}
 			
 			//filtering description		
@@ -134,12 +143,17 @@ public class MyQueryParser {
 				String temp = descData.text();
 				if(temp.contains("Description:"))
 					temp = temp.replaceAll("Description:", "").trim();
-				description.add(temp.trim());
+				description.add(clean(temp.trim().toLowerCase()));
 			}	
 			
-	//		org.jsoup.nodes.Document docQueryNarr = Jsoup.parse(fileContents);
-	//		List<Element> narr = docQueryNarr.getElementsByTag("narr");
-	//		System.out.println(narr);	
+			org.jsoup.nodes.Document docQueryNarr = Jsoup.parse(fileContents);
+			List<Element> narr = docQueryNarr.getElementsByTag("narr");
+			for(Element narrData : narr) {
+				String temp = narrData.text();
+				if(temp.contains("Narrative:"))
+					temp = temp.replaceAll("Narrative:", "").trim();
+				narrative.add(clean(temp.trim().toLowerCase()));
+			}			
 			
 	}
 	private static String readQueryFile() throws IOException {
@@ -156,7 +170,32 @@ public class MyQueryParser {
 		} finally {
 			br.close();
 		}
+	}	
+	
+	private static String parseNarr(String narr) {
+		String result= "";
+		String[] arrOfNarr = narr.split("\\. "); 
+		
+		for(int i=0;i<arrOfNarr.length;i++) {
+			String temp = arrOfNarr[i];
+			if(temp.contains("not relevant")) {
+				continue;
+			}
+			else {
+				result=result + temp;
+			}
+		}
+		
+		
+		return result;
 	}
 	
+	private static String clean(String str) {
+		str = str.replace('?', ' ');
+		str = str.replace('/', ' ');
+		str = str.replace('(', ' ');
+		str = str.replace(')', ' ');
+		return str;
+	}
 		
 }

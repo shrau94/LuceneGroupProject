@@ -34,7 +34,7 @@ public class FR94Indexer {
 
         Directory fr94Dir = FSDirectory.open(Paths.get(FR94_DIRECTORY));
         Directory indexDirectory = FSDirectory.open(Paths.get(FR94_INDEX_DIRECTORY));
-        Analyzer analyzer = new StandardAnalyzer();
+        Analyzer analyzer = new MyAnalyzer();
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
         config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
         IndexWriter iwriter = new IndexWriter(indexDirectory, config);

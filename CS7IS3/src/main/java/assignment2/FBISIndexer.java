@@ -36,7 +36,7 @@ public class FBISIndexer {
 		
 		Directory fbisDir = FSDirectory.open(Paths.get(FBIS_DIRECTORY));
 		Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
-		Analyzer analyzer = new StandardAnalyzer();
+		Analyzer analyzer = new MyAnalyzer();
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 		config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
 		IndexWriter iwriter = new IndexWriter(indexDirectory, config);
