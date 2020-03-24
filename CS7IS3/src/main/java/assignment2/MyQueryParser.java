@@ -3,15 +3,21 @@ package assignment2;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-
+import java.io.StringReader;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.core.LowerCaseFilter;
+import org.apache.lucene.analysis.en.PorterStemFilter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.standard.StandardTokenizer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.apache.lucene.index.DirectoryReader;
@@ -26,10 +32,6 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.tartarus.snowball.ext.PorterStemmer;
-import org.jsoup.parser.Parser;
 
 public class MyQueryParser {
 
@@ -78,15 +80,11 @@ public class MyQueryParser {
 		// Creating the  parser and adding "title", "description"
 		
 		parser = new MultiFieldQueryParser(new String[] { "text", "headline" }, analyzer);
-		PorterStemmer stemmer = new PorterStemmer();
-		
+				
 		for(int i=0;i<title.size();i++) {
 			
 			String result = title.get(i)+ " "+ description.get(i)+ " "+ parseNarr(narrative.get(i));
 			
-			stemmer.setCurrent(result);
-			stemmer.stem();
-			result = stemmer.getCurrent();
 			System.out.println(result);
 			Query query = null;
 			query=parser.parse(result);
@@ -182,7 +180,7 @@ public class MyQueryParser {
 				continue;
 			}
 			else {
-				result=result + temp;
+				result=result + " " + temp;
 			}
 		}
 		
@@ -197,5 +195,5 @@ public class MyQueryParser {
 		str = str.replace(')', ' ');
 		return str;
 	}
-		
+	
 }
