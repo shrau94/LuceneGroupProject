@@ -21,7 +21,6 @@ import org.jsoup.select.Elements;
 
 public class FTIndexer {
 	
-	private static final String FT_INDEX_DIRECTORY = "../ft_index";
     private static final String FT_DIRECTORY = "../ft";
     private static final String [] IGNORE_FILES = {"readfrcg", "readmeft", ".DS_Store"};
     private static BufferedReader br;
@@ -31,14 +30,9 @@ public class FTIndexer {
      * Indexes all the files in the FT directory
      * @throws IOException
      */
-	public static void indexFT() throws IOException {
+	public static void indexFT(IndexWriter iwriter) throws IOException {
 
         Directory ftDir = FSDirectory.open(Paths.get(FT_DIRECTORY));
-        Directory indexDirectory = FSDirectory.open(Paths.get(FT_INDEX_DIRECTORY));
-        Analyzer analyzer = new MyAnalyzer();
-        IndexWriterConfig config = new IndexWriterConfig(analyzer);
-        config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
-        IndexWriter iwriter = new IndexWriter(indexDirectory, config);
 
         for(String ftFolder : ftDir.listAll()) {
             if(!ftFolder.equals(IGNORE_FILES[0]) && !ftFolder.equals(IGNORE_FILES[1]) && !ftFolder.equals(IGNORE_FILES[2])) {
@@ -50,8 +44,7 @@ public class FTIndexer {
             }
         }
         System.out.println("FT indexing complete: " + count + " documents indexed.");
-        iwriter.close();
-        indexDirectory.close();
+
         ftDir.close();
     }
 	
@@ -72,9 +65,9 @@ public class FTIndexer {
 
             if(doc.getElementsByTag("DOCNO") != null)
                 fbisDoc.add(new TextField("docno", removeOpeningAndClosingTags(doc, "DOCNO"), Field.Store.YES));
-            if(doc.getElementsByTag("PARENT") != null)
-                fbisDoc.add(new TextField("text", removeOpeningAndClosingTags(doc, "TEXT"), Field.Store.YES));
             if(doc.getElementsByTag("TEXT") != null)
+                fbisDoc.add(new TextField("text", removeOpeningAndClosingTags(doc, "TEXT"), Field.Store.YES));
+            if(doc.getElementsByTag("HEADLINE") != null)
                 fbisDoc.add(new TextField("headline", removeOpeningAndClosingTags(doc, "HEADLINE"), Field.Store.YES));
 
             iwriter.addDocument(fbisDoc);
@@ -83,7 +76,7 @@ public class FTIndexer {
     }
 	
 	/**
-     * Removes the opening and closing tags of the given content
+     * Removes the opening and closing tags of the given content and also removes any comments
      * @param doc
      * @param tag
      * @return String

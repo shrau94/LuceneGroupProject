@@ -21,24 +21,19 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class LATimesIndexer {
-    private static final String INDEX_DIRECTORY = "../latimes_index";
+
     private static final String FBIS_DIRECTORY = "../latimes";
-    private static final String [] IGNORE_FILES = {"readchg.txt", "readmela.txt"};
+    private static final String [] IGNORE_FILES = {"readchg.txt", "readmela.txt", ".DS_Store"};
     private static BufferedReader br;
     private static int count = 0;
 
     /**
-     * Indexes all the files in the FBIS directory
+     * Indexes all the files in the LATimes directory
      * @throws IOException
      */
-    public static void indexLATimes() throws IOException {
+    public static void indexLATimes(IndexWriter iwriter) throws IOException {
 
         Directory fbisDir = FSDirectory.open(Paths.get(FBIS_DIRECTORY));
-        Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
-        Analyzer analyzer = new MyAnalyzer();
-        IndexWriterConfig config = new IndexWriterConfig(analyzer);
-        config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
-        IndexWriter iwriter = new IndexWriter(indexDirectory, config);
 
         for(String fbisFile : fbisDir.listAll()) {
             if(!fbisFile.equals(IGNORE_FILES[0]) && !fbisFile.equals(IGNORE_FILES[1])) {
@@ -46,9 +41,8 @@ public class LATimesIndexer {
                 addLATimesDocs(iwriter);
             }
         }
-        System.out.println("FBIS indexing complete: " + count + " documents indexed.");
-        iwriter.close();
-        indexDirectory.close();
+        System.out.println("LATIMES indexing complete: " + count + " documents indexed.");
+
         fbisDir.close();
     }
 

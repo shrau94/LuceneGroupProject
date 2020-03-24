@@ -20,38 +20,31 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class FR94Indexer {
-    private static final String FR94_INDEX_DIRECTORY = "../fr94_index";
+
     private static final String FR94_DIRECTORY = "../fr94";
     private static final String [] IGNORE_FILES = {"readchg", "readmefr", ".DS_Store"};
     private static BufferedReader br;
     private static int count = 0;
 
     /**
-     * Indexes all the files in the FBIS directory
+     * Indexes all the files in the FR94 directory
      * @throws IOException
      */
-    public static void indexFR94() throws IOException {
+    public static void indexFR94(IndexWriter iwriter) throws IOException {
 
         Directory fr94Dir = FSDirectory.open(Paths.get(FR94_DIRECTORY));
-        Directory indexDirectory = FSDirectory.open(Paths.get(FR94_INDEX_DIRECTORY));
-        Analyzer analyzer = new MyAnalyzer();
-        IndexWriterConfig config = new IndexWriterConfig(analyzer);
-        config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
-        IndexWriter iwriter = new IndexWriter(indexDirectory, config);
 
         for(String fr94Folder : fr94Dir.listAll()) {
             if(!fr94Folder.equals(IGNORE_FILES[0]) && !fr94Folder.equals(IGNORE_FILES[1]) && !fr94Folder.equals(IGNORE_FILES[2])) {
                 Directory fr94FolderDoc = FSDirectory.open(Paths.get("../fr94/"+fr94Folder));
                 for(String fr94File : fr94FolderDoc.listAll()) {
-                    System.out.println("Indexing " + fr94File);
                     br = new BufferedReader(new FileReader("../fr94/" + fr94Folder + "/" + fr94File));
                     addFR94Docs(iwriter);
                 }
             }
         }
         System.out.println("FR94 indexing complete: " + count + " documents indexed.");
-        iwriter.close();
-        indexDirectory.close();
+        
         fr94Dir.close();
     }
 
@@ -72,9 +65,9 @@ public class FR94Indexer {
 
             if(doc.getElementsByTag("DOCNO") != null)
                 fbisDoc.add(new TextField("docno", removeOpeningAndClosingTags(doc, "DOCNO"), Field.Store.YES));
-            if(doc.getElementsByTag("PARENT") != null)
-                fbisDoc.add(new TextField("text", removeOpeningAndClosingTags(doc, "TEXT"), Field.Store.YES));
             if(doc.getElementsByTag("TEXT") != null)
+                fbisDoc.add(new TextField("text", removeOpeningAndClosingTags(doc, "TEXT"), Field.Store.YES));
+            if(doc.getElementsByTag("HEADLINE") != null)
                 fbisDoc.add(new TextField("headline", removeOpeningAndClosingTags(doc, "TI"), Field.Store.YES));
 
             iwriter.addDocument(fbisDoc);
@@ -83,7 +76,7 @@ public class FR94Indexer {
     }
 
     /**
-     * Removes the opening and closing tags of the given content
+     * Removes the opening and closing tags of the given content and also removes any comments
      * @param doc
      * @param tag
      * @return String

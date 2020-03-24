@@ -1,9 +1,12 @@
 package assignment2;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +39,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 public class MyQueryParser {
 
 	// the location of the index
-	private static String INDEX_DIRECTORY = "../fbis_index";
+	private static String INDEX_DIRECTORY = "../index_files";
 
 	// Limiting the number of search results
 	private static int MAX_RESULTS = 1000;
@@ -45,7 +48,7 @@ public class MyQueryParser {
 	private static String QUERIES_PATH = "../Query";
 	
 	// Path of the result of query
-	private static String RESULT_PATH = "";
+	private static String RESULT_PATH = "../query_results.txt";
 	private static BufferedReader br;
 	private static ArrayList<Query> queries = new ArrayList<Query>();
 	private static MultiFieldQueryParser parser;
@@ -59,6 +62,10 @@ public class MyQueryParser {
 	
 	
 	public static void search() throws IOException, ParseException {
+		
+		OutputStream os = new FileOutputStream(new File(RESULT_PATH));
+		String emptydata = "";
+		os.write(emptydata.getBytes(), 0, emptydata.length());
 
 		Analyzer analyzer = new StandardAnalyzer();
 		br = new BufferedReader(new FileReader(QUERIES_PATH + "/" + "topics.txt"));
@@ -85,29 +92,34 @@ public class MyQueryParser {
 			
 			String result = title.get(i)+ " "+ description.get(i)+ " "+ parseNarr(narrative.get(i));
 			
-			System.out.println(result);
+//			System.out.println(result);
 			Query query = null;
 			query=parser.parse(result);
 			queries.add(query);
 			}		
 
 		// Parsing all the queries in the given file		
-		
+		int queryNum = 0;
+		String queryNo[];
 		for(Query queryTemp : queries) {
 			
 			ScoreDoc[] hits = isearcher.search(queryTemp, MAX_RESULTS).scoreDocs;  
 			for (int i = 0; i < hits.length; i++) {
 	            int docno = hits[i].doc;
 	            Document d = isearcher.doc(docno);
-	            System.out.println(d.get("docno"));
+	            queryNo = number.get(queryNum).split(" ");
+	            String data = queryNo[1] + " 0 " + d.get("docno") + " 0 " + hits[i].score + " STANDARD" + "\n";
+				os.write(data.getBytes(), 0, data.length());
 			}
+			queryNum++;
 			
 		}
 		
-		
+		System.out.println("Query parsing complete. Output generated at query_results.txt");
 		
 		// Closing everything
-
+		
+		os.close();
 		ireader.close();
 		directory.close();
 	}
