@@ -108,14 +108,14 @@ public class MyQueryParser {
 	            int docno = hits[i].doc;
 	            Document d = isearcher.doc(docno);
 	            queryNo = number.get(queryNum).split(" ");
-	            String data = queryNo[1] + " 0 " + d.get("docno") + " 0 " + hits[i].score + " STANDARD" + "\n";
+	            String data = queryNo[1] + " 0 " + d.get("docno") + " 0 " + hits[i].score + " TEAM-2" + "\n";
 				os.write(data.getBytes(), 0, data.length());
 			}
 			queryNum++;
 			
 		}
 		
-		System.out.println("Query parsing complete. Output generated at query_results.txt");
+		System.out.println("Done. Output generated at 'query_results.txt'");
 		
 		// Closing everything
 		

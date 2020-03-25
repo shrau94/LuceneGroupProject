@@ -21,19 +21,23 @@ public class MainApplication {
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 		config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
 		IndexWriter iwriter = new IndexWriter(indexDirectory, config);
-		
+
+		System.out.println("Indexing FBIS.");
 		FBISIndexer.indexFBIS(iwriter);
-		
+
+		System.out.println("Indexing FR94.");
 		FR94Indexer.indexFR94(iwriter);
 
+		System.out.println("Indexing FT.");
 		FTIndexer.indexFT(iwriter);
-		
+
+		System.out.println("Indexing LATIMES.");
 		LATimesIndexer.indexLATimes(iwriter);
 		
 		iwriter.close();
 		indexDirectory.close();
-		
+
+		System.out.println("Indexing complete. Now starting to query the index.");
 		MyQueryParser.search();
-		
 	}
 }

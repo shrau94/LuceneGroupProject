@@ -19,6 +19,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import sun.jvm.hotspot.debugger.cdbg.CDebugger;
 
 public class LATimesIndexer {
 
@@ -63,12 +64,8 @@ public class LATimesIndexer {
 
             if(doc.getElementsByTag("DOCNO") != null)
                 fbisDoc.add(new TextField("docno", removeOpeningAndClosingTags(doc, "DOCNO"), Field.Store.YES));
-            if(doc.getElementsByTag("DOCID") != null)
-                fbisDoc.add(new TextField("docid", removeOpeningAndClosingTags(doc, "DOCID"), Field.Store.YES));
-            if(doc.getElementsByTag("DATE") != null)
-                fbisDoc.add(new TextField("date", removeOpeningAndClosingTags(doc, "DATE"), Field.Store.YES));
-            if(doc.getElementsByTag("SECTION") != null)
-                fbisDoc.add(new TextField("section", removeOpeningAndClosingTags(doc, "SECTION"), Field.Store.YES));
+            if(doc.getElementsByTag("HEADLINE") != null)
+                fbisDoc.add(new TextField("headline", removeOpeningAndClosingTags(doc, "HEADLINE"), Field.Store.YES));
             if(doc.getElementsByTag("TEXT") != null)
                 fbisDoc.add(new TextField("text", removeOpeningAndClosingTags(doc, "TEXT"), Field.Store.YES));
 
@@ -93,6 +90,10 @@ public class LATimesIndexer {
             data = data.replaceAll("<" + tag.toLowerCase() + ">", "").trim();
         if(data.contains(("</" + tag + ">").toLowerCase()))
             data = data.replaceAll("</" + tag.toLowerCase() + ">", "").trim();
+        if(data.contains("<p>"))
+            data = data.replaceAll("<p>", "").trim();
+        if(data.contains("</p>"))
+            data = data.replaceAll("</p>", "").trim();
         return data;
     }
 

@@ -1,4 +1,7 @@
-assignment2/FBISIndexer.class
 assignment2/MyAnalyzer.class
 assignment2/MainApplication.class
+assignment2/FR94Indexer.class
+assignment2/FTIndexer.class
+assignment2/FBISIndexer.class
 assignment2/MyQueryParser.class
+assignment2/LATimesIndexer.class
