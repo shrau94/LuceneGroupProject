@@ -108,8 +108,11 @@ public class MyQueryParser {
 	            int docno = hits[i].doc;
 	            Document d = isearcher.doc(docno);
 	            queryNo = number.get(queryNum).split(" ");
-	            String data = queryNo[1] + " 0 " + d.get("docno") + " 0 " + hits[i].score + " TEAM-2" + "\n";
-				os.write(data.getBytes(), 0, data.length());
+	            
+	            if(Integer.parseInt(queryNo[1]) <= 425) {
+		            String data = queryNo[1] + " 0 " + d.get("docno") + " 0 " + hits[i].score + " TEAM-2" + "\n";
+					os.write(data.getBytes(), 0, data.length());
+	            }
 			}
 			queryNum++;
 			

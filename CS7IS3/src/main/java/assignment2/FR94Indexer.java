@@ -65,6 +65,7 @@ public class FR94Indexer {
 
             if(doc.getElementsByTag("DOCNO") != null)
                 fbisDoc.add(new TextField("docno", removeOpeningAndClosingTags(doc, "DOCNO"), Field.Store.YES));
+            	fbisDoc.getValues("docno");
             if(doc.getElementsByTag("TEXT") != null)
                 fbisDoc.add(new TextField("text", removeOpeningAndClosingTags(doc, "TEXT"), Field.Store.YES));
 
