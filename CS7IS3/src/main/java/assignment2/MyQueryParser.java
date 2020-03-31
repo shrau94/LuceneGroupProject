@@ -9,7 +9,10 @@ import java.io.StringReader;
 import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
@@ -29,6 +32,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.BooleanSimilarity;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
+import org.apache.lucene.search.similarities.LMDirichletSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -56,7 +60,7 @@ public class MyQueryParser {
 	private static ArrayList<String> title = new ArrayList<String>();
 	private static ArrayList<String> description = new ArrayList<String>();
 	private static ArrayList<String> narrative = new ArrayList<String>();
-	Analyzer analyzer = new MyAnalyzer();
+	
 	
 	
 	
@@ -67,7 +71,7 @@ public class MyQueryParser {
 		String emptydata = "";
 		os.write(emptydata.getBytes(), 0, emptydata.length());
 
-		Analyzer analyzer = new StandardAnalyzer();
+		Analyzer analyzer = new MyAnalyzer();
 		br = new BufferedReader(new FileReader(QUERIES_PATH + "/" + "topics.txt"));
 		parseQuery();
 		
@@ -83,10 +87,16 @@ public class MyQueryParser {
 		// Creating searcher to search across index
 		IndexSearcher isearcher = new IndexSearcher(ireader);
 		
-
-		// Creating the  parser and adding "title", "description"
+		// Similarity
+//		isearcher.setSimilarity(new BM25Similarity());
 		
-		parser = new MultiFieldQueryParser(new String[] { "text", "headline" }, analyzer);
+
+		// Creating map for boost scores
+		Map<String, Float> boost = new HashMap<String, Float>();
+        boost.put("headline", (float) 0.1);
+        boost.put("text", (float) 0.9);
+		
+        parser = new MultiFieldQueryParser(new String[]{"headline", "text"}, analyzer, boost);
 				
 		for(int i=0;i<title.size();i++) {
 			
@@ -109,10 +119,8 @@ public class MyQueryParser {
 	            Document d = isearcher.doc(docno);
 	            queryNo = number.get(queryNum).split(" ");
 	            
-	            if(Integer.parseInt(queryNo[1]) <= 425) {
-		            String data = queryNo[1] + " 0 " + d.get("docno") + " 0 " + hits[i].score + " TEAM-2" + "\n";
-					os.write(data.getBytes(), 0, data.length());
-	            }
+		        String data = queryNo[1] + " 0 " + d.get("docno") + " 0 " + hits[i].score + " TEAM-2" + "\n";
+				os.write(data.getBytes(), 0, data.length());
 			}
 			queryNum++;
 			

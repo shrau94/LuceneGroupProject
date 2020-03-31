@@ -10,6 +10,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -63,7 +64,7 @@ public class FBISIndexer {
 			Document fbisDoc = new Document();
 
 			if(doc.getElementsByTag("DOCNO") != null) 	
-				fbisDoc.add(new TextField("docno", removeOpeningAndCLosingTags(doc, "DOCNO"), Field.Store.YES));
+				fbisDoc.add(new StringField("docno", removeOpeningAndCLosingTags(doc, "DOCNO"), Field.Store.YES));
 			if(doc.getElementsByTag("TEXT") != null) 		
 				fbisDoc.add(new TextField("text", removeOpeningAndCLosingTags(doc, "TEXT"), Field.Store.YES));
             if(doc.getElementsByTag("TI") != null) 		
