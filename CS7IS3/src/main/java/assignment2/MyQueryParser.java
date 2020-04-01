@@ -9,6 +9,7 @@ import java.io.StringReader;
 import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,25 @@ public class MyQueryParser {
 		Analyzer analyzer = new MyAnalyzer();
 		br = new BufferedReader(new FileReader(QUERIES_PATH + "/" + "topics.txt"));
 		parseQuery();
+		final List<String> stopWords = Arrays.asList(
+				"a", "about", "above", "after", "again", "against", "ain", "all", "am", "an", 
+				"and", "any", "are", "aren", "aren't", "as", "at", "be", "because", "been", "before",
+				"being", "below", "between", "both", "but", "by", "can", "couldn", "couldn't", "d", "did",
+				"didn", "didn't", "do", "does", "doesn", "doesn't", "doing", "don", "don't", "down", "during",
+				"each", "few", "for", "from", "further", "had", "hadn", "hadn't", "has", "hasn", "hasn't", "have",
+				"haven", "haven't", "having", "he", "her", "here", "hers", "herself", "him", "himself", "his", "how",
+				"i", "if", "in", "into", "is", "isn", "isn't", "it", "it's", "its", "itself", "just", "ll", "m", "ma",
+				"me", "mightn", "mightn't", "more", "most", "mustn", "mustn't", "my", "myself", "needn", "needn't", "no", "nor",
+				"not", "now", "o", "of", "off", "on", "once", "only", "or", "other", "our", "ours", "ourselves", "out", "over",
+				"own", "re", "s", "same", "shan", "shan't", "she", "she's", "should", "should've", "shouldn", "shouldn't", "so",
+				"some", "such", "t", "than", "that", "that'll", "the", "their", "theirs", "them", "themselves", "then", "there",
+				"these", "they", "this", "those", "through", "to", "too", "under", "until", "up", "ve", "very", "was", "wasn",
+				"wasn't", "we", "were", "weren", "weren't", "what", "when", "where", "which", "while", "who", "whom", "why", "will",
+				"with", "won", "won't", "wouldn", "wouldn't", "y", "you", "you'd", "you'll", "you're", "you've", "your", "yours",
+				"yourself", "yourselves", "could", "he'd", "he'll", "he's", "here's", "how's", "i'd", "i'll", "i'm", "i've", "let's",
+				"ought", "she'd", "she'll", "that's", "there's", "they'd", "they'll", "they're", "they've", "we'd", "we'll",
+				"we're", "we've", "what's", "when's", "where's", "who's", "why's", "would","discuss","mention", "documents",
+				"describe"  );
 		
 
 		// Emptying the file contents if it is already filled with values
@@ -100,9 +120,17 @@ public class MyQueryParser {
 				
 		for(int i=0;i<title.size();i++) {
 			
-			String result = title.get(i)+ " "+ description.get(i)+ " "+ parseNarr(narrative.get(i));
+			String result = title.get(i)+ " "+ title.get(i)+ " "+ title.get(i)+ " "+ description.get(i)+ " "+ description.get(i)+ " "+ parseNarr(narrative.get(i));
+			String[] allWords = result.split(" ");
+			StringBuilder builder = new StringBuilder();
+		    for(String word : allWords) {
+		        if(!stopWords.contains(word)) {
+		            builder.append(word);
+		            builder.append(' ');
+		        }
+		    }
+		    result = builder.toString().trim();
 			
-//			System.out.println(result);
 			Query query = null;
 			query=parser.parse(result);
 			queries.add(query);
@@ -200,9 +228,21 @@ public class MyQueryParser {
 		for(int i=0;i<arrOfNarr.length;i++) {
 			String temp = arrOfNarr[i];
 			if(temp.contains("not relevant")) {
+				if(temp.contains("is relevant")||temp.contains("are relevant")) {
+					String[] splitOfNarr = narr.split(", "); 
+					for(int j=0;j<splitOfNarr.length;j++) {
+						if((splitOfNarr[j].contains("is relevant")||splitOfNarr[j].contains("are relevant"))&&splitOfNarr[j].contains("not relevant")==false) {
+							result=result+splitOfNarr[j];
+						}
+					}
+				}
 				continue;
 			}
 			else {
+				if(temp.contains("relevant"))
+					temp = temp.replaceAll("relevant", "").trim();
+				if(temp.contains("document"))
+					temp = temp.replaceAll("document", "").trim();
 				result=result + " " + temp;
 			}
 		}
