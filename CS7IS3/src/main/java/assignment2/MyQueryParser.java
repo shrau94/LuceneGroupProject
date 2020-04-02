@@ -44,16 +44,16 @@ import org.apache.lucene.queryparser.classic.ParseException;
 public class MyQueryParser {
 
 	// the location of the index
-	private static String INDEX_DIRECTORY = "../index_files";
+	private static String INDEX_DIRECTORY = "./index_files";
 
 	// Limiting the number of search results
 	private static int MAX_RESULTS = 1000;
 	
 	// Path for the file with all the queries
-	private static String QUERIES_PATH = "../Query";
+	private static String QUERIES_PATH = "./Query";
 	
 	// Path of the result of query
-	private static String RESULT_PATH = "../query_results.txt";
+	private static String RESULT_PATH = "./query_results.txt";
 	private static BufferedReader br;
 	private static ArrayList<Query> queries = new ArrayList<Query>();
 	private static MultiFieldQueryParser parser;
@@ -108,7 +108,7 @@ public class MyQueryParser {
 		IndexSearcher isearcher = new IndexSearcher(ireader);
 		
 		// Similarity
-//		isearcher.setSimilarity(new BM25Similarity());
+		isearcher.setSimilarity(new BM25Similarity());
 		
 
 		// Creating map for boost scores

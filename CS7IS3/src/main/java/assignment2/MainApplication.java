@@ -7,6 +7,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
@@ -19,6 +20,7 @@ public class MainApplication {
 		Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
 		Analyzer analyzer = new MyAnalyzer();
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
+		config.setSimilarity(new BM25Similarity());
 		config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
 		IndexWriter iwriter = new IndexWriter(indexDirectory, config);
 
