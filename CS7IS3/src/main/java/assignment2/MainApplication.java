@@ -10,6 +10,10 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
+//Kavith Trials
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.search.similarities.*;
+
 public class MainApplication {
 	
 	private static final String INDEX_DIRECTORY = "../index_files";
@@ -17,8 +21,12 @@ public class MainApplication {
 	public static void main(String[] args) throws IOException, ParseException {
 		
 		Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
-		Analyzer analyzer = new MyAnalyzer();
+		//Analyzer analyzer = new MyAnalyzer();
+		Analyzer analyzer = new EnglishAnalyzer();
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
+		//config.setSimilarity(new BM25Similarity());
+		config.setSimilarity(new MultiSimilarity(new Similarity[]{new BM25Similarity(),new LMDirichletSimilarity()}));
+
 		config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
 		IndexWriter iwriter = new IndexWriter(indexDirectory, config);
 

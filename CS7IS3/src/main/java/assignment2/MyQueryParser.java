@@ -40,6 +40,9 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 
+//Kavith Trials
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.search.similarities.*;
 
 public class MyQueryParser {
 
@@ -72,7 +75,8 @@ public class MyQueryParser {
 		String emptydata = "";
 		os.write(emptydata.getBytes(), 0, emptydata.length());
 
-		Analyzer analyzer = new MyAnalyzer();
+		//Analyzer analyzer = new MyAnalyzer();
+		Analyzer analyzer = new EnglishAnalyzer();
 		br = new BufferedReader(new FileReader(QUERIES_PATH + "/" + "topics.txt"));
 		parseQuery();
 		final List<String> stopWords = Arrays.asList(
@@ -108,8 +112,8 @@ public class MyQueryParser {
 		IndexSearcher isearcher = new IndexSearcher(ireader);
 		
 		// Similarity
-//		isearcher.setSimilarity(new BM25Similarity());
-		
+		//isearcher.setSimilarity(new BM25Similarity());
+		isearcher.setSimilarity(new MultiSimilarity(new Similarity[]{new BM25Similarity(),new LMDirichletSimilarity()}));
 
 		// Creating map for boost scores
 		Map<String, Float> boost = new HashMap<String, Float>();
