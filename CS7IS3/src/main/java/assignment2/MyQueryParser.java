@@ -113,8 +113,8 @@ public class MyQueryParser {
 
 		// Creating map for boost scores
 		Map<String, Float> boost = new HashMap<String, Float>();
-        boost.put("headline", (float) 0.1);
-        boost.put("text", (float) 0.9);
+        boost.put("headline", (float) 0.05);
+        boost.put("text", (float) 0.95);
 		
         parser = new MultiFieldQueryParser(new String[]{"headline", "text"}, analyzer, boost);
 				
@@ -223,17 +223,24 @@ public class MyQueryParser {
 	
 	private static String parseNarr(String narr) {
 		String result= "";
+		String notRel = "";
 		String[] arrOfNarr = narr.split("\\. "); 
 		
 		for(int i=0;i<arrOfNarr.length;i++) {
 			String temp = arrOfNarr[i];
-			if(temp.contains("not relevant")) {
+			if(temp.contains("not relevant") || temp.contains("irrelevant")) {
+				if(temp.contains("unless")) {
+					result=result+ " "+temp.split("unless")[1];
+					notRel=notRel+ " "+temp.split("unless")[0];
+				}
 				if(temp.contains("is relevant")||temp.contains("are relevant")) {
 					String[] splitOfNarr = narr.split(", "); 
 					for(int j=0;j<splitOfNarr.length;j++) {
 						if((splitOfNarr[j].contains("is relevant")||splitOfNarr[j].contains("are relevant"))&&splitOfNarr[j].contains("not relevant")==false) {
-							result=result+splitOfNarr[j];
+							result=result+ " "+splitOfNarr[j];
 						}
+						else
+							notRel=notRel+ " "+splitOfNarr[j];
 					}
 				}
 				continue;
@@ -241,14 +248,21 @@ public class MyQueryParser {
 			else {
 				if(temp.contains("relevant"))
 					temp = temp.replaceAll("relevant", "").trim();
+				if(temp.contains("documents"))
+					temp = temp.replaceAll("documents", "").trim();
 				if(temp.contains("document"))
 					temp = temp.replaceAll("document", "").trim();
 				result=result + " " + temp;
 			}
 		}
 		
+		if (notRel != "") {
+			return result + " - " + notRel;
+		}
+		else {
+			return result;
+		}
 		
-		return result;
 	}
 	
 	private static String clean(String str) {
@@ -256,6 +270,7 @@ public class MyQueryParser {
 		str = str.replace('/', ' ');
 		str = str.replace('(', ' ');
 		str = str.replace(')', ' ');
+		str = str.replace('-', ' ');
 		return str;
 	}
 	
