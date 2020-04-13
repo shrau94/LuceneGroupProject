@@ -61,11 +61,7 @@ public class MyQueryParser {
 	private static ArrayList<String> title = new ArrayList<String>();
 	private static ArrayList<String> description = new ArrayList<String>();
 	private static ArrayList<String> narrative = new ArrayList<String>();
-	
-	
-	
-	
-	
+
 	public static void search() throws IOException, ParseException {
 		
 		OutputStream os = new FileOutputStream(new File(RESULT_PATH));

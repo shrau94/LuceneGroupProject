@@ -66,10 +66,10 @@ public class FTIndexer {
 
             if(doc.getElementsByTag("DOCNO") != null)
                 fbisDoc.add(new StringField("docno", removeOpeningAndClosingTags(doc, "DOCNO"), Field.Store.YES));
-            if(doc.getElementsByTag("TEXT") != null)
-                fbisDoc.add(new TextField("text", removeOpeningAndClosingTags(doc, "TEXT"), Field.Store.YES));
             if(doc.getElementsByTag("HEADLINE") != null)
                 fbisDoc.add(new TextField("headline", removeOpeningAndClosingTags(doc, "HEADLINE"), Field.Store.YES));
+            if(doc.getElementsByTag("TEXT") != null)
+                fbisDoc.add(new TextField("text", removeOpeningAndClosingTags(doc, "TEXT"), Field.Store.NO));
 
             iwriter.addDocument(fbisDoc);
             count++;
@@ -86,7 +86,7 @@ public class FTIndexer {
         Elements element = doc.getElementsByTag(tag);
         Elements tmpElement = element.clone();
         String data = tmpElement.toString();
-        data = data.replaceAll("<!-- .* -->", "");
+        //data = data.replaceAll("<!-- .* -->", "");
         if(data.contains("\n"))
             data = data.replaceAll("\n", " ").trim();
         if(data.contains(("<" + tag + ">").toLowerCase()))
