@@ -65,10 +65,10 @@ public class FBISIndexer {
 
 			if(doc.getElementsByTag("DOCNO") != null) 	
 				fbisDoc.add(new StringField("docno", removeOpeningAndCLosingTags(doc, "DOCNO"), Field.Store.YES));
-			if(doc.getElementsByTag("TEXT") != null) 		
-				fbisDoc.add(new TextField("text", removeOpeningAndCLosingTags(doc, "TEXT"), Field.Store.YES));
             if(doc.getElementsByTag("TI") != null) 		
             	fbisDoc.add(new TextField("headline", removeOpeningAndCLosingTags(doc, "TI"), Field.Store.YES));
+			if(doc.getElementsByTag("TEXT") != null)
+				fbisDoc.add(new TextField("text", removeOpeningAndCLosingTags(doc, "TEXT"), Field.Store.NO));
 
             iwriter.addDocument(fbisDoc);
             count++;
