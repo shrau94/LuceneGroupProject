@@ -5,8 +5,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.HashMap;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -20,6 +22,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 
 public class FBISIndexer {
 
@@ -59,7 +62,14 @@ public class FBISIndexer {
 		String fileContents = readFile();
 		org.jsoup.nodes.Document document = Jsoup.parse(fileContents);
 		List<Element> list = document.getElementsByTag("DOC");
-		
+
+		HashMap<String,Analyzer> analyzerMap = new HashMap<>();
+		analyzerMap.put("headline", new EnglishAnalyzer());
+		analyzerMap.put("text", new MyAnalyzer());
+
+		PerFieldAnalyzerWrapper wrapper = new PerFieldAnalyzerWrapper(
+				new StandardAnalyzer(), analyzerMap);
+
 		for(Element doc : list) {
 			Document fbisDoc = new Document();
 
