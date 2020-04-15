@@ -233,10 +233,10 @@ public class MyQueryParser {
 					result=result+ " "+temp.split("unless")[1];
 					notRel=notRel+ " "+temp.split("unless")[0];
 				}
-				if(temp.contains("is relevant")||temp.contains("are relevant")) {
+				if(temp.contains("a relevant")||temp.contains("is relevant")||temp.contains("are relevant")) {
 					String[] splitOfNarr = narr.split(", "); 
 					for(int j=0;j<splitOfNarr.length;j++) {
-						if((splitOfNarr[j].contains("is relevant")||splitOfNarr[j].contains("are relevant"))&&splitOfNarr[j].contains("not relevant")==false) {
+						if((temp.contains("a relevant")||splitOfNarr[j].contains("is relevant")||splitOfNarr[j].contains("are relevant"))&&splitOfNarr[j].contains("not relevant")==false) {
 							result=result+ " "+splitOfNarr[j];
 						}
 						else
@@ -246,22 +246,22 @@ public class MyQueryParser {
 				continue;
 			}
 			else {
-				if(temp.contains("relevant"))
-					temp = temp.replaceAll("relevant", "").trim();
-				if(temp.contains("documents"))
-					temp = temp.replaceAll("documents", "").trim();
-				if(temp.contains("document"))
-					temp = temp.replaceAll("document", "").trim();
 				result=result + " " + temp;
 			}
 		}
 		
 		if (notRel != "") {
-			return result + " - " + notRel;
+			result = result + " - " + notRel;
 		}
-		else {
-			return result;
-		}
+		
+		if(result.contains("relevant"))
+			result = result.replaceAll("relevant", "").trim();
+		if(result.contains("documents"))
+			result = result.replaceAll("documents", "").trim();
+		if(result.contains("document"))
+			result = result.replaceAll("document", "").trim();
+		
+		return result;
 		
 	}
 	
