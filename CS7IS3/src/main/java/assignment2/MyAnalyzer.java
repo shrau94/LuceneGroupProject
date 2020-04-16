@@ -12,6 +12,7 @@ import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.en.PorterStemFilter;
 import org.apache.lucene.analysis.miscellaneous.TrimFilter;
 
+import org.apache.lucene.analysis.en.EnglishPossessiveFilter;
 
 public class MyAnalyzer extends Analyzer{
     @Override
@@ -25,8 +26,10 @@ public class MyAnalyzer extends Analyzer{
 		
 		// Converting all tokens to lower case
 		result =	new LowerCaseFilter(result);
-		
-		// Trims leading and trailing whitespace from Tokens in the stream.
+
+		result = new EnglishPossessiveFilter(result);
+
+        // Trims leading and trailing whitespace from Tokens in the stream.
 		result = new TrimFilter(result);
 		
 		// Removes stop words from the stream
@@ -34,7 +37,7 @@ public class MyAnalyzer extends Analyzer{
 		
 		// Porter Stem filtering for converting words with common stems as they 
         // tend to have similar meanings.
-        result = new PorterStemFilter(result);        
+        result = new PorterStemFilter(result);
         
         return new TokenStreamComponents(standard, result);
     }

@@ -69,7 +69,7 @@ public class FTIndexer {
             if(doc.getElementsByTag("HEADLINE") != null)
                 fbisDoc.add(new TextField("headline", removeOpeningAndClosingTags(doc, "HEADLINE"), Field.Store.YES));
             if(doc.getElementsByTag("TEXT") != null)
-                fbisDoc.add(new TextField("text", removeOpeningAndClosingTags(doc, "TEXT"), Field.Store.NO));
+                fbisDoc.add(new TextField("text", removeOpeningAndClosingTags(doc, "TEXT") + removeOpeningAndClosingTags(doc, "DATELINE"), Field.Store.NO));
 
             iwriter.addDocument(fbisDoc);
             count++;

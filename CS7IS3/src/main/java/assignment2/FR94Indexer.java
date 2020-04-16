@@ -70,7 +70,7 @@ public class FR94Indexer {
             if(doc.getElementsByTag("DOCTITLE") != null)
             	fbisDoc.add(new TextField("headline", removeOpeningAndClosingTags(doc, "DOCTITLE"), Field.Store.YES));
             if(doc.getElementsByTag("TEXT") != null)
-                fbisDoc.add(new TextField("text", removeOpeningAndClosingTags(doc, "TEXT"), Field.Store.NO));
+                fbisDoc.add(new TextField("text", removeOpeningAndClosingTags(doc, "TEXT") + removeOpeningAndClosingTags(doc, "FOOTNOTE"), Field.Store.NO));
 
             iwriter.addDocument(fbisDoc);
             count++;

@@ -7,10 +7,10 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.search.similarities.BM25Similarity;
-import org.apache.lucene.search.similarities.LMDirichletSimilarity;
+import org.apache.lucene.search.similarities.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+
 
 public class MainApplication {
 	
@@ -21,7 +21,7 @@ public class MainApplication {
 		Directory indexDirectory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));
 		Analyzer analyzer = new MyAnalyzer();
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
-		config.setSimilarity(new BM25Similarity());
+		config.setSimilarity(new MultiSimilarity(new Similarity[]{new BM25Similarity(), new LMJelinekMercerSimilarity(0.6f)}));
 		config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
 		IndexWriter iwriter = new IndexWriter(indexDirectory, config);
 
@@ -36,7 +36,7 @@ public class MainApplication {
 
 		System.out.println("Indexing LATIMES.");
 		LATimesIndexer.indexLATimes(iwriter);
-		
+
 		iwriter.close();
 		indexDirectory.close();
 

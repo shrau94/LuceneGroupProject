@@ -61,16 +61,16 @@ public class LATimesIndexer {
         List<Element> list = document.getElementsByTag("DOC");
 
         for(Element doc : list) {
-            Document fbisDoc = new Document();
+            Document laTimesDoc = new Document();
 
             if(doc.getElementsByTag("DOCNO") != null)
-                fbisDoc.add(new StringField("docno", removeOpeningAndClosingTags(doc, "DOCNO"), Field.Store.YES));
+                laTimesDoc.add(new StringField("docno", removeOpeningAndClosingTags(doc, "DOCNO"), Field.Store.YES));
             if(doc.getElementsByTag("HEADLINE") != null)
-                fbisDoc.add(new TextField("headline", removeOpeningAndClosingTags(doc, "HEADLINE"), Field.Store.YES));
+                laTimesDoc.add(new TextField("headline", removeOpeningAndClosingTags(doc, "HEADLINE"), Field.Store.YES));
             if(doc.getElementsByTag("TEXT") != null)
-                fbisDoc.add(new TextField("text", removeOpeningAndClosingTags(doc, "TEXT"), Field.Store.NO));
+                laTimesDoc.add(new TextField("text", removeOpeningAndClosingTags(doc, "TEXT") + removeOpeningAndClosingTags(doc, "GRAPHIC") + removeOpeningAndClosingTags(doc, "SUBJECT"), Field.Store.NO));
 
-            iwriter.addDocument(fbisDoc);
+            iwriter.addDocument(laTimesDoc);
             count++;
         }
     }

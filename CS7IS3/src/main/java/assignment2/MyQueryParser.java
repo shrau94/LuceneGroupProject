@@ -40,6 +40,9 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 
+import org.apache.lucene.search.similarities.LMJelinekMercerSimilarity;
+import org.apache.lucene.search.similarities.MultiSimilarity;
+
 
 public class MyQueryParser {
 
@@ -61,10 +64,6 @@ public class MyQueryParser {
 	private static ArrayList<String> title = new ArrayList<String>();
 	private static ArrayList<String> description = new ArrayList<String>();
 	private static ArrayList<String> narrative = new ArrayList<String>();
-	
-	
-	
-	
 	
 	public static void search() throws IOException, ParseException {
 		
@@ -108,7 +107,7 @@ public class MyQueryParser {
 		IndexSearcher isearcher = new IndexSearcher(ireader);
 		
 		// Similarity
-		isearcher.setSimilarity(new BM25Similarity());
+		isearcher.setSimilarity(new MultiSimilarity(new Similarity[]{new BM25Similarity(), new LMJelinekMercerSimilarity(0.6f)}));
 		
 
 		// Creating map for boost scores
